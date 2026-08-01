@@ -426,29 +426,21 @@ I
 </div>
 
 ---
-# 📂 Repository Structure
+# 📁 Repository Overview
 
-```text
-ISTR/
-│
-├── 📁 docs/
-│   ├── Final Project Report
-│   ├── Functional & Performance Testing
-│   ├── User Acceptance Testing (UAT)
-│   ├── Solution Architecture
-│   ├── Customer Journey Map
-│   ├── Problem–Solution Fit
-│   ├── Technology Stack
-│   └── Project Planning Documents
-│
-├── 📁 images/
-│   └── Banner & Assets
-│
-├── 📄 README.md
-├── 📄 LICENSE
-└── 📄 .gitignore
-```
-
+| Folder | Description |
+|---------|-------------|
+| 💡 **1. Ideation Phase** | Brainstorming, Problem Statement, Empathy Mapping |
+| 📋 **2. Requirement Analysis** | Customer Journey, DFDs, Requirements & Technology Stack |
+| 🏗️ **3. Project Design Phase** | Problem–Solution Fit, Proposed Solution & Architecture |
+| 📅 **4. Project Planning Phase** | Sprint Planning, Agile Planning & Timeline |
+| 💻 **5. Project Development Phase** | Development Artifacts & Performance Testing |
+| ✅ **User Acceptance Testing** | UAT Documentation & Validation |
+| 📖 **6. Project Documentation** | Final Consolidated Project Report |
+| 🎥 **7. Project Demonstration** | Demonstration Files & YouTube Reference |
+| 🖼️ **Images** | Repository Banner & Visual Assets |
+| 📄 **README.md** | Project Documentation |
+| 🌐 **index.html** | Interactive GitHub Pages Website |
 ---
 
 # 📚 Documentation
@@ -537,7 +529,7 @@ The complete project walkthrough demonstrates:
 - 📈 Reports & Analytics
 
 > 📺 **YouTube Demonstration:**  
-> `(https://www.youtube.com/watch?v=ND5_3TZqlyU)`
+> `https://www.youtube.com/watch?v=ND5_3TZqlyU`
 
 ---
 
