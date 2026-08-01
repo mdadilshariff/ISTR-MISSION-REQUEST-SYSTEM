@@ -550,11 +550,9 @@ Supported deployment methods include:
 
 Special thanks to:
 
-- ServiceNow App Engine Platform
-- ServiceNow Flow Designer
-- Performance Analytics
 - ServiceNow Developer Program
 - KKR & KSR Institute of Technology & Sciences
+- SmartBridge to provide me this opportunity
 
 ---
 
