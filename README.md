@@ -585,7 +585,7 @@ Special thanks to:
 <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github"/>
 </a>
 
-<a href="www.linkedin.com/in/adil-shariff-mohammed">
+<a href="https://www.linkedin.com/in/adil-shariff-mohammed">
 <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin"/>
 </a>
 
@@ -600,17 +600,24 @@ Special thanks to:
 ---
 
 <div align="center">
+<div align="center">
 
 # ⭐ Thank You for Visiting!
 
-If you found this project interesting or useful, please consider giving the repository a **⭐ Star**.
+If you found this project interesting or useful, please consider giving the repository a ⭐ Star.
 
-### 🚀 *Built with ServiceNow App Engine Studio*
+### 🚀 Built with ServiceNow App Engine Studio
 
-<img src="https://img.shields.io/github/stars/mdadilshariff/ISTR?style=social"/>
+<a href="https://github.com/mdadilshariff/ISTR-MISSION-REQUEST-SYSTEM/stargazers">
+    <img src="https://img.shields.io/github/stars/mdadilshariff/ISTR-MISSION-REQUEST-SYSTEM?style=social" />
+</a>
 
-<img src="https://img.shields.io/github/forks/mdadilshariff/ISTR?style=social"/>
+<a href="https://github.com/mdadilshariff/ISTR-MISSION-REQUEST-SYSTEM/network/members">
+    <img src="https://img.shields.io/github/forks/mdadilshariff/ISTR-MISSION-REQUEST-SYSTEM?style=social" />
+</a>
 
-<img src="https://img.shields.io/github/watchers/mdadilshariff/ISTR?style=social"/>
+<a href="https://github.com/mdadilshariff/ISTR-MISSION-REQUEST-SYSTEM/watchers">
+    <img src="https://img.shields.io/github/watchers/mdadilshariff/ISTR-MISSION-REQUEST-SYSTEM?style=social" />
+</a>
 
 </div>
