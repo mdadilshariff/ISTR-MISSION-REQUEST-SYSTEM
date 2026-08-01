@@ -38,11 +38,11 @@
 <img src="https://img.shields.io/badge/🌐%20Interactive%20Showcase-Visit-00C853?style=for-the-badge"/>
 </a>
 
-<a href="(https://www.youtube.com/watch?v=ND5_3TZqlyU)">
+<a href="https://www.youtube.com/watch?v=ND5_3TZqlyU">
 <img src="https://img.shields.io/badge/🎥%20Demo-Watch-FF0000?style=for-the-badge&logo=youtube"/>
 </a>
 
-<a href="docs/ISTR_Final_Project_Report.pdf">
+<a href="ISTR/6.Project Documentation/ISTR_Final_Project_Report.pdf">
 <img src="https://img.shields.io/badge/📄%20Project%20Report-PDF-blue?style=for-the-badge"/>
 </a>
 
