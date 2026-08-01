@@ -441,9 +441,6 @@ ISTR/
 │   ├── Technology Stack
 │   └── Project Planning Documents
 │
-├── 📁 update-set/
-│   └── ISTR Scoped Application.xml
-│
 ├── 📁 images/
 │   └── Banner & Assets
 │
