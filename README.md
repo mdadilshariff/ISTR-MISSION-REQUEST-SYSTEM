@@ -42,7 +42,7 @@
 <img src="https://img.shields.io/badge/🎥%20Demo-Watch-FF0000?style=for-the-badge&logo=youtube"/>
 </a>
 
-<a href="6.%20Project%20Documentation/ISTR_Final_Project_Report.pdf">
+<a href="https://github.com/mdadilshariff/ISTR-MISSION-REQUEST-SYSTEM/blob/main/6.%20Project%20Documentation/ISTR_Final_Project_Report.pdf" target="_blank">
   <img src="https://img.shields.io/badge/📄%20Project%20Report-PDF-blue?style=for-the-badge"/>
 </a>
 
