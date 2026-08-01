@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="images/ISTR_Banner.png" width="100%" alt="ISTR Banner"/>
+<img src="Images/ISTR_Banner.png" width="100%" alt="ISTR Banner"/>
 
 # 🚀 Intergalactic Space Travel Request (ISTR)
 
