@@ -42,8 +42,8 @@
 <img src="https://img.shields.io/badge/🎥%20Demo-Watch-FF0000?style=for-the-badge&logo=youtube"/>
 </a>
 
-<a href="ISTR/6.Project Documentation/ISTR_Final_Project_Report.pdf">
-<img src="https://img.shields.io/badge/📄%20Project%20Report-PDF-blue?style=for-the-badge"/>
+<a href="6.%20Project%20Documentation/ISTR_Final_Project_Report.pdf">
+  <img src="https://img.shields.io/badge/📄%20Project%20Report-PDF-blue?style=for-the-badge"/>
 </a>
 
 </p>
