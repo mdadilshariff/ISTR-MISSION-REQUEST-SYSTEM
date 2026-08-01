@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISTR — Intergalactic Space Travel Request System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void: #090d16;
+    --panel: #111a2c;
+    --panel-light: #1b2740;
+    --amber: #f5a623;
+    --cyan: #2dd4e8;
+    --ink: #e8ecf4;
+    --muted: #7c8aa3;
+    --danger: #ef6461;
+    --good: #4ade80;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--ink);
+    font-family:'Sora', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--amber); color:#0a0e17; }
+
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  a{ color:inherit; }
+
+  /* ---------- starfield ---------- */
+  #stars{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 140px 80px, rgba(255,255,255,.35), transparent),
+      radial-gradient(1.5px 1.5px at 90px 160px, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 240px 40px, rgba(255,255,255,.3), transparent),
+      radial-gradient(1px 1px at 300px 200px, rgba(255,255,255,.45), transparent),
+      radial-gradient(1.5px 1.5px at 360px 120px, rgba(255,255,255,.3), transparent);
+    background-repeat: repeat;
+    background-size: 400px 300px;
+    opacity:.6;
+  }
+
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 28px; position:relative; z-index:1; }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:14px;
+  }
+  .eyebrow::before{
+    content:''; width:18px; height:1px; background:var(--amber); display:inline-block;
+  }
+
+  section{ padding:96px 0; position:relative; border-top:1px solid var(--panel-light); }
+  section:first-of-type{ border-top:none; }
+
+  h2{ font-size:clamp(26px,3.2vw,38px); font-weight:700; letter-spacing:-0.01em; margin-bottom:18px; }
+  .lede{ color:var(--muted); font-size:17px; max-width:640px; margin-bottom:48px; }
+
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ================= HERO / CONSOLE ================= */
+  .hero{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:140px 0 80px;
+    border-top:none;
+  }
+  .hero-grid{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(to right, rgba(124,138,163,.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(124,138,163,.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, black 40%, transparent 100%);
+    z-index:0;
+  }
+  .console{
+    position:relative; z-index:1;
+    border:1px solid var(--panel-light);
+    background:linear-gradient(180deg, rgba(17,26,44,.9), rgba(9,13,22,.9));
+    border-radius:14px;
+    padding:20px 24px;
+    max-width:640px;
+    box-shadow: 0 0 0 1px rgba(245,166,35,.04), 0 30px 60px -30px rgba(0,0,0,.8);
+  }
+  .console-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted);
+    letter-spacing:.08em; text-transform:uppercase;
+    margin-bottom:16px; padding-bottom:12px; border-bottom:1px dashed var(--panel-light);
+  }
+  .dot-row{ display:flex; gap:6px; }
+  .dot-row span{ width:8px; height:8px; border-radius:50%; background:var(--panel-light); }
+
+  .stage-row{ display:flex; align-items:center; gap:0; margin-bottom:6px; }
+  .stage{
+    flex:1; text-align:center; font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+    letter-spacing:.04em; color:var(--muted); padding:9px 2px; position:relative;
+    border-bottom:2px solid var(--panel-light); transition:color .3s ease, border-color .3s ease;
+  }
+  .stage .lamp{
+    width:7px; height:7px; border-radius:50%; background:var(--panel-light);
+    margin:0 auto 6px; transition:background .3s ease, box-shadow .3s ease;
+  }
+  .stage.active{ color:var(--amber); border-color:var(--amber); }
+  .stage.active .lamp{ background:var(--amber); box-shadow:0 0 10px 2px rgba(245,166,35,.6); }
+  .stage.done{ color:var(--cyan); border-color:var(--cyan); }
+  .stage.done .lamp{ background:var(--cyan); box-shadow:0 0 8px 1px rgba(45,212,232,.5); }
+
+  .readout{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--muted); margin-top:14px; display:flex; justify-content:space-between; }
+  .readout b{ color:var(--ink); font-weight:500; }
+  .readout .val{ color:var(--good); }
+
+  .hero-title{
+    position:relative; z-index:1;
+    margin-top:56px;
+  }
+  .hero-title h1{
+    font-size:clamp(48px, 9vw, 96px);
+    font-weight:800; letter-spacing:-0.03em; line-height:.95;
+    background:linear-gradient(180deg, #fff, #b9c3d6 70%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero-title .sub{
+    font-size:clamp(16px,2.1vw,22px); color:var(--muted); margin-top:18px; max-width:560px;
+    font-weight:400;
+  }
+  .hero-title .tagline{
+    font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--amber);
+    letter-spacing:.08em; text-transform:uppercase; margin-top:22px;
+  }
+
+  /* ================= STATS ================= */
+  .stats-bar{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--panel-light); border:1px solid var(--panel-light); border-radius:12px; overflow:hidden;
+  }
+  .stat{ background:var(--panel); padding:28px 18px; text-align:center; }
+  .stat .num{ font-family:'IBM Plex Mono', monospace; font-size:clamp(28px,4vw,40px); font-weight:600; color:var(--cyan); }
+  .stat .label{ font-size:12.5px; color:var(--muted); margin-top:6px; letter-spacing:.02em; }
+
+  @media (max-width:720px){ .stats-bar{ grid-template-columns:repeat(2,1fr); } }
+
+  /* ================= PROBLEM / SOLUTION ================= */
+  .split{ display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+  @media (max-width:800px){ .split{ grid-template-columns:1fr; } }
+  .panel{
+    background:var(--panel); border:1px solid var(--panel-light); border-radius:12px; padding:28px;
+  }
+  .panel h3{ font-family:'IBM Plex Mono', monospace; font-size:13px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:16px; }
+  .panel.before h3{ color:var(--danger); }
+  .panel.after h3{ color:var(--good); }
+  .panel ul{ list-style:none; }
+  .panel li{ padding:8px 0; border-bottom:1px solid var(--panel-light); color:var(--muted); font-size:14.5px; display:flex; gap:10px; }
+  .panel li:last-child{ border-bottom:none; }
+  .panel.before li::before{ content:'✕'; color:var(--danger); font-size:12px; }
+  .panel.after li::before{ content:'✓'; color:var(--good); font-size:12px; }
+
+  /* ================= ARCHITECTURE LAYERS ================= */
+  .layers{ display:flex; flex-direction:column; gap:2px; border-radius:12px; overflow:hidden; border:1px solid var(--panel-light); }
+  .layer{
+    background:var(--panel); padding:18px 24px; display:flex; align-items:center; justify-content:space-between;
+    cursor:default; transition:background .25s ease, padding-left .25s ease;
+    border-left:3px solid transparent;
+  }
+  .layer:hover{ background:var(--panel-light); border-left-color:var(--amber); padding-left:30px; }
+  .layer .lname{ font-weight:600; font-size:15px; }
+  .layer .ldesc{ color:var(--muted); font-size:13.5px; margin-top:3px; }
+  .layer .ltag{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--cyan); white-space:nowrap; margin-left:20px; }
+
+  /* ================= TECH GRID ================= */
+  .tech-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  @media (max-width:820px){ .tech-grid{ grid-template-columns:repeat(2,1fr); } }
+  .tile{
+    background:var(--panel); border:1px solid var(--panel-light); border-radius:10px; padding:18px;
+    transition:transform .2s ease, border-color .2s ease;
+    position:relative;
+  }
+  .tile:hover{ transform:translateY(-3px); border-color:var(--amber); }
+  .tile .tname{ font-weight:600; font-size:14.5px; margin-bottom:4px; }
+  .tile .ttag{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .tile .switch{
+    position:absolute; top:16px; right:16px; width:26px; height:14px; border-radius:8px;
+    background:var(--panel-light);
+  }
+  .tile .switch::after{
+    content:''; position:absolute; top:2px; left:2px; width:10px; height:10px; border-radius:50%;
+    background:var(--muted); transition:transform .2s ease, background .2s ease;
+  }
+  .tile:hover .switch::after{ background:var(--good); transform:translateX(12px); }
+
+  /* ================= WORKFLOW STEPPER ================= */
+  .flow{ display:flex; align-items:flex-start; overflow-x:auto; gap:0; padding-bottom:10px; }
+  .fstep{ flex:0 0 auto; width:150px; text-align:center; position:relative; padding:0 6px; }
+  .fstep .fnum{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--amber); margin-bottom:10px; }
+  .fnode{
+    width:44px; height:44px; border-radius:50%; margin:0 auto 12px; border:2px solid var(--panel-light);
+    display:flex; align-items:center; justify-content:center; background:var(--panel);
+    font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--muted);
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .fstep:hover .fnode{ border-color:var(--cyan); color:var(--cyan); }
+  .fline{ position:absolute; top:50px; left:-50%; width:100%; height:2px; background:var(--panel-light); z-index:-1; }
+  .fstep:first-child .fline{ display:none; }
+  .flabel{ font-size:13px; color:var(--ink); font-weight:500; }
+  .fsub{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+
+  /* ================= TABLE ================= */
+  table{ width:100%; border-collapse:collapse; font-size:14px; }
+  th,td{ text-align:left; padding:12px 14px; border-bottom:1px solid var(--panel-light); }
+  th{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--amber); }
+  td{ color:var(--muted); }
+  td.strong{ color:var(--ink); font-weight:500; }
+  tr:hover td{ background:rgba(245,166,35,.03); }
+
+  /* ================= FOOTER ================= */
+  footer{ padding:60px 0 80px; text-align:center; }
+  footer .brand{ font-family:'IBM Plex Mono', monospace; color:var(--amber); letter-spacing:.1em; font-size:13px; margin-bottom:10px;}
+  footer .links{ display:flex; gap:22px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
+  footer .links a{ font-size:13.5px; color:var(--muted); text-decoration:none; border-bottom:1px solid transparent; padding-bottom:2px; transition:color .2s, border-color .2s; }
+  footer .links a:hover{ color:var(--cyan); border-color:var(--cyan); }
+  footer .fine{ color:var(--muted); font-size:12.5px; margin-top:28px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="stars"></div>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="wrap">
+    <div class="console">
+      <div class="console-head">
+        <span>ISTR // MISSION CONTROL</span>
+        <div class="dot-row"><span></span><span></span><span></span></div>
+      </div>
+      <div class="stage-row" id="stageRow">
+        <div class="stage" data-i="0"><div class="lamp"></div>DRAFT</div>
+        <div class="stage" data-i="1"><div class="lamp"></div>SUBMIT</div>
+        <div class="stage" data-i="2"><div class="lamp"></div>MANAGER</div>
+        <div class="stage" data-i="3"><div class="lamp"></div>FINANCE</div>
+        <div class="stage" data-i="4"><div class="lamp"></div>M.CTRL</div>
+        <div class="stage" data-i="5"><div class="lamp"></div>SCHED</div>
+      </div>
+      <div class="readout">
+        <span>REQ&nbsp;<b class="mono">#ISTR0042</b></span>
+        <span>STATUS&nbsp;<span class="val" id="statusVal">MANAGER APPROVED</span></span>
+      </div>
+    </div>
+
+    <div class="hero-title">
+      <h1>ISTR</h1>
+      <div class="sub">Intergalactic Space Travel Request System — a ServiceNow scoped application that turns mission request approval from a scattered email chain into a single, auditable workflow.</div>
+      <div class="tagline">// Built on ServiceNow App&nbsp;Engine&nbsp;Studio</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STATS ================= -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">System readout</div>
+    <h2 class="reveal">The project, in numbers</h2>
+    <p class="lede reveal">Every figure below reflects the actual scope of the build — not a placeholder.</p>
+    <div class="stats-bar reveal">
+      <div class="stat"><div class="num" data-target="10">0</div><div class="label">Functional modules</div></div>
+      <div class="stat"><div class="num" data-target="12">0</div><div class="label">User stories</div></div>
+      <div class="stat"><div class="num" data-target="10">0</div><div class="label">ACLs enforced</div></div>
+      <div class="stat"><div class="num" data-target="5">0</div><div class="label">Roles &amp; groups</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROBLEM / SOLUTION ================= -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">Why it exists</div>
+    <h2 class="reveal">From scattered paperwork to one workflow</h2>
+    <p class="lede reveal">Mission requests used to move through inboxes and spreadsheets. ISTR gives every request one home, one owner at each stage, and one source of truth.</p>
+    <div class="split reveal">
+      <div class="panel before">
+        <h3>Before ISTR</h3>
+        <ul>
+          <li>Paper forms and email threads</li>
+          <li>No visibility into approval status</li>
+          <li>Manual follow-ups across departments</li>
+          <li>Scattered, unreportable records</li>
+        </ul>
+      </div>
+      <div class="panel after">
+        <h3>With ISTR</h3>
+        <ul>
+          <li>Guided Service Catalog intake</li>
+          <li>Live status at every approval stage</li>
+          <li>Automated multi-level routing</li>
+          <li>Centralized, reportable, secure records</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ARCHITECTURE ================= -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">Under the hood</div>
+    <h2 class="reveal">Six layers, one platform</h2>
+    <p class="lede reveal">ISTR is entirely native ServiceNow — no external services, no separate backend to maintain.</p>
+    <div class="layers reveal">
+      <div class="layer">
+        <div><div class="lname">Frontend</div><div class="ldesc">Service Portal &amp; Service Catalog intake form</div></div>
+        <div class="ltag">Presentation</div>
+      </div>
+      <div class="layer">
+        <div><div class="lname">Automation</div><div class="ldesc">Flow Designer, Business Rules, Client Scripts, UI Policies</div></div>
+        <div class="ltag">Logic</div>
+      </div>
+      <div class="layer">
+        <div><div class="lname">Security</div><div class="ldesc">10 ACLs across 5 roles and groups</div></div>
+        <div class="ltag">Access control</div>
+      </div>
+      <div class="layer">
+        <div><div class="lname">Data</div><div class="ldesc">x_2065295_istr_i_space_travel_request, extends Task</div></div>
+        <div class="ltag">Storage</div>
+      </div>
+      <div class="layer">
+        <div><div class="lname">Notifications</div><div class="ldesc">Email Engine — submitted, approved, rejected, completed</div></div>
+        <div class="ltag">Comms</div>
+      </div>
+      <div class="layer">
+        <div><div class="lname">Analytics</div><div class="ldesc">Performance Analytics dashboard &amp; reports</div></div>
+        <div class="ltag">Insight</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WORKFLOW ================= -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">The approval chain</div>
+    <h2 class="reveal">One request, three sign-offs</h2>
+    <p class="lede reveal">Every mission request moves through the same accountable sequence before it's scheduled.</p>
+    <div class="flow reveal">
+      <div class="fstep"><div class="fline"></div><div class="fnum">01</div><div class="fnode">✎</div><div class="flabel">Request</div><div class="fsub">Service Catalog</div></div>
+      <div class="fstep"><div class="fline"></div><div class="fnum">02</div><div class="fnode">M</div><div class="flabel">Manager</div><div class="fsub">First review</div></div>
+      <div class="fstep"><div class="fline"></div><div class="fnum">03</div><div class="fnode">F</div><div class="flabel">Finance</div><div class="fsub">Budget check</div></div>
+      <div class="fstep"><div class="fline"></div><div class="fnum">04</div><div class="fnode">C</div><div class="flabel">Mission Control</div><div class="fsub">Final sign-off</div></div>
+      <div class="fstep"><div class="fline"></div><div class="fnum">05</div><div class="fnode">✓</div><div class="flabel">Scheduled</div><div class="fsub">Ready for launch</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TECH STACK ================= -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">Platform capabilities</div>
+    <h2 class="reveal">Built entirely native</h2>
+    <p class="lede reveal">Every capability below is a first-party ServiceNow feature — no third-party services in the loop.</p>
+    <div class="tech-grid reveal">
+      <div class="tile"><div class="switch"></div><div class="tname">Service Portal</div><div class="ttag">Frontend</div></div>
+      <div class="tile"><div class="switch"></div><div class="tname">Flow Designer</div><div class="ttag">Workflow</div></div>
+      <div class="tile"><div class="switch"></div><div class="tname">Business Rules</div><div class="ttag">Server logic</div></div>
+      <div class="tile"><div class="switch"></div><div class="tname">Client Scripts</div><div class="ttag">Client logic</div></div>
+      <div class="tile"><div class="switch"></div><div class="tname">UI Policies</div><div class="ttag">Dynamic forms</div></div>
+      <div class="tile"><div class="switch"></div><div class="tname">ACLs &amp; Roles</div><div class="ttag">Security</div></div>
+      <div class="tile"><div class="switch"></div><div class="tname">Email Engine</div><div class="ttag">Notifications</div></div>
+      <div class="tile"><div class="switch"></div><div class="tname">Perf. Analytics</div><div class="ttag">Dashboard</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= USER STORIES SNAPSHOT ================= -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">Delivery record</div>
+    <h2 class="reveal">Shipped across three sprints</h2>
+    <p class="lede reveal">34 story points, delivered at a velocity of roughly 11.3 per sprint.</p>
+    <div class="reveal">
+      <table>
+        <thead><tr><th>Sprint</th><th>Focus</th><th>Story Points</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">Sprint 1</td><td>Mission Request Management, Approval Workflow (Mgr/Finance)</td><td>13</td><td>Complete</td></tr>
+          <tr><td class="strong">Sprint 2</td><td>Mission Control Approval, Security &amp; Access Control, Dynamic Forms</td><td>10</td><td>Complete</td></tr>
+          <tr><td class="strong">Sprint 3</td><td>Notifications, Dashboard, Reports</td><td>11</td><td>Complete</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand">ISTR // INTERGALACTIC SPACE TRAVEL REQUEST</div>
+    <div style="color:var(--muted); font-size:14px;">A ServiceNow scoped application, built end-to-end from ideation to testing.</div>
+    <div class="links">
+      <a href="#">GitHub Repository →</a>
+      <a href="#">Project Demo →</a>
+      <a href="#">Full Report (PDF) →</a>
+    </div>
+    <div class="fine">Designed &amp; built by Dil · 2026</div>
+  </div>
+</footer>
+
+<script>
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:.15 });
+  revealEls.forEach(el=>io.observe(el));
+
+  // counters
+  const counters = document.querySelectorAll('.num');
+  const cio = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const el = e.target;
+        const target = parseInt(el.dataset.target, 10);
+        let cur = 0;
+        const step = Math.max(1, Math.round(target/30));
+        const t = setInterval(()=>{
+          cur += step;
+          if(cur >= target){ cur = target; clearInterval(t); }
+          el.textContent = cur;
+        }, 30);
+        cio.unobserve(el);
+      }
+    });
+  }, { threshold:.4 });
+  counters.forEach(el=>cio.observe(el));
+
+  // hero approval-chain light sequence
+  const stages = document.querySelectorAll('#stageRow .stage');
+  const statusVal = document.getElementById('statusVal');
+  const statusNames = ["DRAFT","SUBMITTED","MANAGER APPROVED","FINANCE APPROVED","MISSION CONTROL APPROVED","SCHEDULED"];
+  let idx = 0;
+  function tick(){
+    stages.forEach((s,i)=>{
+      s.classList.remove('active');
+      if(i < idx) s.classList.add('done'); else s.classList.remove('done');
+    });
+    if(stages[idx]){
+      stages[idx].classList.remove('done');
+      stages[idx].classList.add('active');
+      statusVal.textContent = statusNames[idx];
+    }
+    idx = (idx + 1) % stages.length;
+  }
+  tick();
+  setInterval(tick, 1800);
+</script>
+</body>
+</html>
